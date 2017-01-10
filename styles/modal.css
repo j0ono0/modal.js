@@ -1,0 +1,12 @@
+/*Styles for Modal component*/
+
+.modal{
+	background: #eee;
+	display: none;
+	margin: 3em auto;
+	padding: 3em;
+	width: 60%;
+}
+.modal--open{
+	display: block;
+}
