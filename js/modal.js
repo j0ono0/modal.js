@@ -41,18 +41,10 @@ var Modal = function(id){
 	}
 }
 
-function modalIds(modals){
-	var ids = [];
-	for(i=0; i < modals.length; i++){
-		ids.push(modals[i].id);
-	}
-	return ids;
-}
+var modals = $(".modal").toArray();
 
-var modalIds = modalIds($(".modal"));
-
-for(var i=0; i<modalIds.length; i++){
-	var modal = new Modal(modalIds[i]);
+for(var i=0; i<modals.length; i++){
+	var modal = new Modal(modals[i].id);
 }
 
 //////////////////////////////////
