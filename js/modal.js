@@ -6,6 +6,10 @@ var ModalLauncher = function(){
 
 	var modal = this;
 
+	function clipWindow(elem){
+		this.elem = elem;
+	}
+
 	// Initialise: find all links to modals
 	for(var i=0; i < this.modals.length; i++){
 		var id = this.modals[i].id;
@@ -17,6 +21,7 @@ var ModalLauncher = function(){
 			var hash = e.target.hash.substr(1);
 			if(modal.triggers.indexOf(hash) != -1){
 				new Modal(hash);
+				$("body").wrapInner("<div class='modal__bg'></div>");
 			}
 		}
 	});
@@ -29,16 +34,20 @@ var Modal = function(id){
     this.close = close;
 
     var modal = this;
+    var closeClass = ".modal__close--"+this.id;
 
     // Lauch modal on creation of object
     this.elem.addClass('modal--open');
-    $(".modal__close--"+this.id).on('click.'+this.id,function(e){
-    	modal.close();
+    $(closeClass).on('click.'+this.id,function(e){
+    	if($(e.target).hasClass("modal__close--"+this.id)){
+	    	modal.close();	
+    	}
     });
 	
 	function close(){
     	this.elem.removeClass('modal--open');
-		$(".modal__close--"+this.id).off('click.'+this.id);	    
+		$(closeClass).off('click.'+this.id);
+		$(".modal__bg").contents().unwrap();	    
 	}
 };
 
