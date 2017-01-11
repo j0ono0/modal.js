@@ -1,35 +1,37 @@
 
-function closeModal(){
-	$modal.removeClass('modal--open');
-	// Remove close modal listener
-	$(document).off('click.modal');
-}
-function openModal(id){
-	$modal = $(id);
-	$modal.addClass("modal--open");
-	// Add close modal listener
-	$(document).on('click.modal',function(e){
-		if(	
-			(
-			!$(e.target).hasClass("modal--open") && 
-			!$(e.target).parents().hasClass("modal--open")
-			)||
-			$(e.target).hasClass("close-modal")
-		){
-			closeModal();
-		}
-	});
-}
+var Modal = function(id){
+    this.id = id;
+    this.elem = $("#"+id);
+    this.triggers = $("[href='#"+this.id+"']");
+    this.launch = launch;
+    this.hide = hide;
+    
+    var modal = this;
+    var control = control();
+    
+    function launch(){
+        this.elem.addClass('modal--open');
+    };
+    function hide(){
+        this.elem.removeClass('modal--open');
+    };
+    function control(){
+        $(document).on('click.'+this.id,function(e){
+            if(e.target.href && e.target.href.split('#')[1] == modal.id){
+                modal.launch();
+                e.preventDefault();
+            }else if(!$(e.target).hasClass('modal--open') && $(e.target).parents(".modal--open").length == 0){
+                modal.hide();
+            }
+        });
+    };
+};
 
-$modalTriggers = $(".modal-trigger");
-
-$modalTriggers.on('click',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	openModal($(this).attr("href"));
-})
-
-
+// Initialise modal overlays
+var modals = $(".modal")
+modals.each(function(){
+    var modal = new Modal(this.id);
+});
 
 //////////////////////////////////
 function log(msg){
