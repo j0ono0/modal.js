@@ -1,56 +1,59 @@
 
-// Listener for actions that launch a modal dialogue
-var ModalLauncher = function(){
-	this.modals = $(".modal");
-	this.triggers = [];
+var Modal = function(id){
+	this.id = id;
+	this.elem = $('#'+id);
+	this.openLinks = $("[href='#"+this.id+"']").toArray();
+	this.open = open;
+	this.close = close;
 
 	var modal = this;
+	var closeLinks = $('.close--'+this.id).toArray();
+	var modalBg = $("<div></div>").addClass('modal__bg');
+	var scrollY = 0;
 
-	function clipWindow(elem){
-		this.elem = elem;
+	function open(){
+		scrollY = $(window).scrollTop();
+		modalBg.css({'margin-top':-scrollY});
+		this.elem.addClass('modal--open');
+		$("body").wrapInner(modalBg);
 	}
-
-	// Initialise: find all links to modals
-	for(var i=0; i < this.modals.length; i++){
-		var id = this.modals[i].id;
-		this.triggers.push(id);
-	}
-	// Listen for clicks on triggers
-	$(document).on('click',function(e){
-		if (e.target.hasAttribute("href")){
-			var hash = e.target.hash.substr(1);
-			if(modal.triggers.indexOf(hash) != -1){
-				new Modal(hash);
-				$("body").wrapInner("<div class='modal__bg'></div>");
-			}
-		}
-	});
-}
-var modalLauncher = modalLauncher || new ModalLauncher();
-
-var Modal = function(id){
-    this.id = id;
-    this.elem = $("#"+id);
-    this.close = close;
-
-    var modal = this;
-    var closeClass = ".modal__close--"+this.id;
-
-    // Lauch modal on creation of object
-    this.elem.addClass('modal--open');
-    $(closeClass).on('click.'+this.id,function(e){
-    	if($(e.target).hasClass("modal__close--"+this.id)){
-	    	modal.close();	
-    	}
-    });
-	
 	function close(){
-    	this.elem.removeClass('modal--open');
-		$(closeClass).off('click.'+this.id);
-		$(".modal__bg").contents().unwrap();	    
+		this.elem.removeClass('modal--open');
+		$(".modal__bg").contents().unwrap();
+		$(window).scrollTop(scrollY);
 	}
-};
 
+	// Open modal listeners
+	for(var i=0; i < this.openLinks.length; i++){
+		$(this.openLinks[i]).on('click',function(e){
+			modal.open();
+			e.preventDefault();
+		});
+	}
+	// Close modal listeners
+	for(var i=0; i < closeLinks.length; i++){
+		$(closeLinks[i]).on('click',function(e){
+			if($(e.target).hasClass('close--'+modal.id)){
+				modal.close();
+				e.preventDefault();
+			}
+		});
+	}
+}
+
+function modalIds(modals){
+	var ids = [];
+	for(i=0; i < modals.length; i++){
+		ids.push(modals[i].id);
+	}
+	return ids;
+}
+
+var modalIds = modalIds($(".modal"));
+
+for(var i=0; i<modalIds.length; i++){
+	var modal = new Modal(modalIds[i]);
+}
 
 //////////////////////////////////
 function log(msg){

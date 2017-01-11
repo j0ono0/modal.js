@@ -23,6 +23,9 @@
 	transform: translate(-50%,-50%);
 	width: 60%;
 }
+.modal__bg{
+	position: fixed;
+}
 .modal--open,
 .no-js .modal {
 	display: block;
